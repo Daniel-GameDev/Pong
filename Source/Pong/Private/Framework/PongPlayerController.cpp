@@ -3,6 +3,7 @@
 
 #include "Framework/PongPlayerController.h"
 #include "Kismet/KismetMathLibrary.h"
+//#include "Player/PongArenaCamera.h"
 
 APongPlayerController::APongPlayerController()
 	:
@@ -10,6 +11,7 @@ APongPlayerController::APongPlayerController()
 	MinRange(-850.f),
 	MaxRange(850.f)
 {
+	AutoManageActiveCameraTarget(false);
 }
 
 void APongPlayerController::SetupInputComponent()
@@ -33,6 +35,11 @@ void APongPlayerController::MovePlatform(float Value)
 		}
 	}
 }
+
+/*void APongPlayerController::SetupPlayerCamera(APongArenaCamera* PongArenaCamera)
+{
+	SetViewTargetWithBlend(PongArenaCamera);
+}*/
 
 void APongPlayerController::AddPlatformOffSet(float deltaY)
 {

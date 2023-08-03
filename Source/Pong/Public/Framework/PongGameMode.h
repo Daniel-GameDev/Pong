@@ -10,6 +10,7 @@
 class AGates;
 class APongArenaCamera;
 class APongPlayerController;
+class APongPlayerStart;
 
 USTRUCT(BlueprintType)
 struct FPongPlayer
@@ -39,5 +40,11 @@ protected:
 	TMap<APongPlayerController*, FPongPlayer> PongPlayers;
 
 	UFUNCTION()
-	void SetupPlayerData(ArenaSides arenaSide);
+	FPongPlayer SetupPlayerData(ArenaSides arenaSide);
+
+	UFUNCTION()
+	APongPlayerStart* GetPlayerStart(ArenaSides arenaSide);
+
+	UFUNCTION()
+	virtual void PostLogin(APlayerController* NewPlayer) override;
 };

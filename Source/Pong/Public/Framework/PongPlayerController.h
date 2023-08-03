@@ -7,6 +7,8 @@
 #include "Common/ArenaSides.h"
 #include "PongPlayerController.generated.h"
 
+//class APongArenaCamera;
+
 UCLASS()
 class PONG_API APongPlayerController : public APlayerController
 {
@@ -33,8 +35,15 @@ public:
 	UPROPERTY(EditAnywhere)
 	float MaxRange;
 
+	//UPROPERTY(EditAnywhere)
+	//APongArenaCamera* PongArenaCamera;
+
+	//UFUNCTION(BlueprintCallable)
+	//void SetupPlayerCamera(APongArenaCamera* PongArenaCamera);
+
 	UFUNCTION()
 	void AddPlatformOffSet(float deltaY);
+
 protected:
 	virtual void BeginPlay() override;
 
