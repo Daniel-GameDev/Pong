@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-#include "Components/BoxComponent.h"
 #include "Gameplay/Gates.h"
+#include "Components/BoxComponent.h"
 
 AGates::AGates()
 {

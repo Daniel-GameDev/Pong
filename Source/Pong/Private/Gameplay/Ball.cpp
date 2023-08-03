@@ -1,9 +1,10 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
+#include "Gameplay/Ball.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Common/WallsInterface.h"
 #include "Common/Walls.h"
-#include "Gameplay/Ball.h"
+#include "Player/PlayerPlatform.h"
 
 ABall::ABall()
 	:
@@ -64,6 +65,9 @@ void ABall::ChangeDirectionBasedOnWallType(AActor* TouchedWall)
 				break;
 			}
 		}
+	}else if (Cast<APlayerPlatform>(TouchedWall))
+	{
+		ChangeDirection();
 	}
 }
 
