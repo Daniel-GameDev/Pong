@@ -11,6 +11,9 @@ APlayerPlatform::APlayerPlatform()
 	PlatformMesh->SetRelativeScale3D(FVector(0.5f, 5.f, 2.5f));
 
 	EAutoPossessAI::Disabled;
+
+	bReplicates = true;
+	PlatformMesh->SetIsReplicated(true);
 }
 
 void APlayerPlatform::BeginPlay()

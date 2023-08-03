@@ -24,6 +24,8 @@ ABall::ABall()
 
 	BallMesh->OnComponentBeginOverlap.AddDynamic(this, &ABall::OnOverlapBegin);
 
+	bReplicates = true;
+	BallMesh->SetIsReplicated(true);
 }
 
 void ABall::BeginPlay()

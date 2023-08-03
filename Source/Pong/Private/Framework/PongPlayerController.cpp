@@ -41,7 +41,7 @@ void APongPlayerController::MovePlatform(float Value)
 	SetViewTargetWithBlend(PongArenaCamera);
 }*/
 
-void APongPlayerController::AddPlatformOffSet(float deltaY)
+void APongPlayerController::AddPlatformOffSet_Implementation(float deltaY)
 {
 	GetPawn()->AddActorWorldOffset(FVector(0.f, deltaY, 0.f));
 }
@@ -52,6 +52,6 @@ void APongPlayerController::BeginPlay()
 
 	if (ArenaSide == RightSide)//TODO: Need to be assigned by gamemode
 	{
-		PlatformVelocity = PlatformVelocity * -1;
+		//PlatformVelocity = ;
 	}
 }

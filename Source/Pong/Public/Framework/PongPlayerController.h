@@ -41,11 +41,14 @@ public:
 	//UFUNCTION(BlueprintCallable)
 	//void SetupPlayerCamera(APongArenaCamera* PongArenaCamera);
 
-	UFUNCTION()
+	UFUNCTION(Server, Unreliable)
 	void AddPlatformOffSet(float deltaY);
 
 protected:
 	virtual void BeginPlay() override;
+
+	//UFUNCTION(BlueprintImplementableEvent)
+	//void DoSomething2();
 
 private:
 	UPROPERTY()

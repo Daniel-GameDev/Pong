@@ -17,14 +17,19 @@ AActor* APongGameMode::GetStartPoint(APongPlayerController* PongPlayer)
 
 		PongPlayers.Add(PongPlayer, SetupPlayerData(RightSide));
 
+		PongPlayer->PlatformVelocity = PongPlayer->PlatformVelocity * -1;
+
+		//PongPlayer->ArenaSide == RightSide; //TODO: Delete ArenaSide in PlayerController?
+
 		return GetPlayerStart(RightSide);
-		
 	}
 	else if (PongPlayers.Num() == 1)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Player II Entered the Game as LeftPlayer!"));
 
 		PongPlayers.Add(PongPlayer, SetupPlayerData(LeftSide));
+
+		//PongPlayer->PlatformVelocity = PongPlayer->PlatformVelocity * -1;
 
 		return GetPlayerStart(LeftSide);
 	}
