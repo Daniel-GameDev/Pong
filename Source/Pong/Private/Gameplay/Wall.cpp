@@ -2,46 +2,12 @@
 
 #include "Gameplay/Wall.h"
 
-// Sets default values
 AWall::AWall()
-	:
-	SideWallSize(41.f, 1.f, 3.f),
-	FrontWallSize(6.f, 1.f, 3.f)
 {
-	PrimaryActorTick.bCanEverTick = true;
+	PrimaryActorTick.bCanEverTick = false;
 
 	WallMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("WallMesh"));
 	WallMesh->SetupAttachment(GetRootComponent());
 	WallMesh->SetGenerateOverlapEvents(true);
 	WallMesh->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Overlap);
-}
-
-void AWall::BeginPlay()
-{
-	Super::BeginPlay();
-}
-
-EWallType AWall::GetWallType()
-{
-	return EWallType(WallType);
-}
-
-void AWall::ChangeSize()
-{
-	switch (WallType)
-	{
-	case EWT_Side:
-		WallMesh->SetRelativeScale3D(SideWallSize);
-		break;
-	case EWT_Front:
-		WallMesh->SetRelativeScale3D(FrontWallSize);
-		break;
-	default:
-		break;
-	}
-}
-
-void AWall::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
 }

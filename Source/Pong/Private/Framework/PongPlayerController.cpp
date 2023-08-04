@@ -3,11 +3,10 @@
 
 #include "Framework/PongPlayerController.h"
 #include "Kismet/KismetMathLibrary.h"
-//#include "Player/PongArenaCamera.h"
 
 APongPlayerController::APongPlayerController()
 	:
-	PlatformVelocity(20.f),
+	PlatformVelocity(20.f), //Default Values
 	MinRange(-850.f),
 	MaxRange(850.f)
 {
@@ -36,22 +35,7 @@ void APongPlayerController::MovePlatform(float Value)
 	}
 }
 
-/*void APongPlayerController::SetupPlayerCamera(APongArenaCamera* PongArenaCamera)
+void APongPlayerController::AddPlatformOffSet_Implementation(float DeltaY)
 {
-	SetViewTargetWithBlend(PongArenaCamera);
-}*/
-
-void APongPlayerController::AddPlatformOffSet_Implementation(float deltaY)
-{
-	GetPawn()->AddActorWorldOffset(FVector(0.f, deltaY, 0.f));
-}
-
-void APongPlayerController::BeginPlay()
-{
-	Super::BeginPlay();
-
-	if (ArenaSide == EAS_RightSide)//TODO: Need to be assigned by gamemode
-	{
-		//PlatformVelocity = ;
-	}
+	GetPawn()->AddActorWorldOffset(FVector(0.f, DeltaY, 0.f));
 }

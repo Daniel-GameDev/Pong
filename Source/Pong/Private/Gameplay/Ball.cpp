@@ -8,7 +8,7 @@
 
 ABall::ABall()
 	:
-	BallVelocity(1000)
+	Velocity(1000)
 {
 	PrimaryActorTick.bCanEverTick = true;
 
@@ -32,30 +32,21 @@ void ABall::BeginPlay()
 {
 	Super::BeginPlay();
 	
-	bool RandomDirection = UKismetMathLibrary::RandomBool();
-	float RandomX = UKismetMathLibrary::SelectFloat(1, -1, RandomDirection);
-
-	RandomDirection = UKismetMathLibrary::RandomBool();
-	float RandomY = UKismetMathLibrary::SelectFloat(1, -1, RandomDirection);
-
-	Direction = FVector(RandomX, RandomY, 0.f);
+	SetRandomDirection();
 }
 
-void ABall::BallOffset(float deltatime)
+void ABall::Offset(float deltatime)
 {
-	AddActorWorldOffset((BallVelocity * deltatime) * Direction);
+	AddActorWorldOffset((Velocity * deltatime) * Direction);
 }
 
-void ABall::ChangeDirectionBasedOnWallType(AActor* TouchedWall)
+void ABall::ChangeDirectionByWallType(AActor* TouchedWall)
 {
-	EWallType WallType;
 	if (TouchedWall->GetClass()->ImplementsInterface(UWallsInterface::StaticClass()))
 	{
 		if (IWallsInterface* Interface = Cast<IWallsInterface>(TouchedWall))
 		{
-			WallType = Interface->GetWallType();
-
-			switch (WallType)
+			switch (Interface->GetWallType())
 			{
 			case EWT_Side:
 				ChangeSide();
@@ -80,18 +71,29 @@ void ABall::ChangeSide()
 
 void ABall::ChangeDirection()
 {
-	Direction = FVector((Direction.X*-1.f), Direction.Y, Direction.Z);
+	Direction = FVector((Direction.X * -1.f), Direction.Y, Direction.Z);
+}
+
+void ABall::SetRandomDirection()
+{
+	bool RandomDirection = UKismetMathLibrary::RandomBool();
+	float RandomX = UKismetMathLibrary::SelectFloat(1, -1, RandomDirection);
+
+	RandomDirection = UKismetMathLibrary::RandomBool();
+	float RandomY = UKismetMathLibrary::SelectFloat(1, -1, RandomDirection);
+
+	Direction = FVector(RandomX, RandomY, 0.f);
 }
 
 void ABall::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	BallOffset(DeltaTime);
+	Offset(DeltaTime);
 }
 
 void ABall::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	ChangeDirectionBasedOnWallType(OtherActor);
+	ChangeDirectionByWallType(OtherActor);
 }
 

@@ -11,30 +11,21 @@
 #include "Gameplay/Ball.h"
 #include "Components/BoxComponent.h"
 #include "Blueprint/UserWidget.h"
+#include "Gameplay/Ball.h"
 
 AActor* APongGameMode::GetStartPoint(APongPlayerController* PongPlayer)
 {
 	if (PongPlayers.Num() == 0)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Player I Entered the Game as RightPlayer!"));
-
 		PongPlayers.Add(PongPlayer, SetupPlayerData(EAS_RightSide));
 
 		PongPlayer->PlatformVelocity = PongPlayer->PlatformVelocity * -1;
-
-		//PongPlayer->ArenaSide == EAS_RightSide; //TODO: Delete ArenaSide in PlayerController?
-
-		//CreateWaitWidget(PongPlayer);
 
 		return GetPlayerStart(EAS_RightSide);
 	}
 	else if (PongPlayers.Num() == 1)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Player II Entered the Game as LeftPlayer!"));
-
 		PongPlayers.Add(PongPlayer, SetupPlayerData(EAS_LeftSide));
-
-		//PongPlayer->PlatformVelocity = PongPlayer->PlatformVelocity * -1;
 
 		return GetPlayerStart(EAS_LeftSide);
 	}
@@ -42,7 +33,7 @@ AActor* APongGameMode::GetStartPoint(APongPlayerController* PongPlayer)
 	return nullptr;
 }
 
-FPongPlayer APongGameMode::SetupPlayerData(EArenaSides arenaSide)
+FPongPlayer APongGameMode::SetupPlayerData(EArenaSides PlayerSide)
 {
 	TArray<AActor*> GatesArray;;
 	TArray<AActor*> CameraArray;
@@ -51,30 +42,28 @@ FPongPlayer APongGameMode::SetupPlayerData(EArenaSides arenaSide)
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), APongArenaCamera::StaticClass(), CameraArray);
 
 	FPongPlayer PongPlayerTempStruct;
-	PongPlayerTempStruct.ArenaSide = arenaSide;
+	PongPlayerTempStruct.ArenaSide = PlayerSide;
 
 	for (AActor* TGates : GatesArray)
 	{
-		AGates* Gate = Cast<AGates>(TGates);
-
-		if (Gate != nullptr)
+		if (AGates* Gate = Cast<AGates>(TGates))
 		{
- 			if ((Gate->ArenaSide) == arenaSide)
+ 			if (Gate->ArenaSide == PlayerSide)
 			{
 				PongPlayerTempStruct.PlayerGates = Gate;
+				break;
 			}
 		}
 	}
 
 	for (AActor* TPongCamera : CameraArray)
 	{
-		APongArenaCamera* PongCam = Cast<APongArenaCamera>(TPongCamera);
-
-		if (PongCam != nullptr)
+		if (APongArenaCamera* PongCam = Cast<APongArenaCamera>(TPongCamera))
 		{
-			if ((PongCam->ArenaSide) == arenaSide)
+			if (PongCam->ArenaSide == PlayerSide)
 			{
 				PongPlayerTempStruct.PlayerArenaCamera = PongCam;
+				break;
 			}
 		}
 	}
@@ -82,7 +71,7 @@ FPongPlayer APongGameMode::SetupPlayerData(EArenaSides arenaSide)
 	return PongPlayerTempStruct;
 }
 
-APongPlayerStart* APongGameMode::GetPlayerStart(EArenaSides arenaSide)
+APongPlayerStart* APongGameMode::GetPlayerStart(EArenaSides PlayerSide)
 {
 	APongPlayerStart* TempPlayerStart = nullptr;
 	TArray<AActor*> GameStarArray;
@@ -90,13 +79,12 @@ APongPlayerStart* APongGameMode::GetPlayerStart(EArenaSides arenaSide)
 
 	for (AActor* TStartPoint : GameStarArray)
 	{
-		APongPlayerStart* PlayerStart = Cast<APongPlayerStart>(TStartPoint);
-
-		if (PlayerStart != nullptr)
+		if (APongPlayerStart* PlayerStart = Cast<APongPlayerStart>(TStartPoint))
 		{
-			if ((PlayerStart->ArenaSide) == arenaSide)
+			if (PlayerStart->ArenaSide == PlayerSide)
 			{
 				TempPlayerStart = PlayerStart;
+				break;
 			}
 		}
 	}
@@ -116,103 +104,30 @@ void APongGameMode::PostLogin(APlayerController* NewPlayer)
 
 		PongPlayers.Find(NewPongPlayer)->PlayerGates->GatesCollision->OnComponentEndOverlap.AddDynamic(this, &APongGameMode::OnComponentEndOverlap);
 	}
-
-	/*if (GetWorld()->GetAuthGameMode()->GetNumPlayers() < 2)
-	{
-		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("Waiting for Second Player.."));
-	}*/
 }
 
 void APongGameMode::SpawnBall()
 {
-	//FTimerHandle UnusedHandle;
-	//GetWorldTimerManager().SetTimer(UnusedHandle, this, &APongGameMode::SpawnBall, 1.f, false);
-
 	FVector Location(0.f, 0.f, 200.f);
 	FRotator Rotation(0.f, 0.f, 0.f);
 
-	UObject* SpawnActor = Cast<UObject>(StaticLoadObject(UObject::StaticClass(), NULL, TEXT("/Game/Pong/Blueprints/Gameplay/Converted/BP_Ball_C")));
-	UBlueprint* GeneratedBP = Cast<UBlueprint>(SpawnActor);
-	if (!SpawnActor)
+	if (Ball)
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Red, FString::Printf(TEXT("CANT FIND OBJECT TO SPAWN")));
-		return;
+		FActorSpawnParameters SpawnParams;
+		SpawnParams.Owner = this;
+		SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+		GetWorld()->SpawnActor<AActor>(Ball->GeneratedClass, Location, Rotation, SpawnParams);
 	}
-
-	FActorSpawnParameters SpawnParams;
-	SpawnParams.Owner = this;
-	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-	GetWorld()->SpawnActor<ABall>(GeneratedBP->GeneratedClass, Location, Rotation, SpawnParams);
 }
 
 void APongGameMode::OnComponentEndOverlap(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor,
 	class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
-	AGates* Gates = Cast<AGates>(OverlappedComp->GetOwner());
-
-	if (Gates != nullptr)
+	if (AGates* Gates = Cast<AGates>(OverlappedComp->GetOwner()))
 	{
 		for (auto& Player : PongPlayers)
 		{
-			//if (Player.Value.ArenaSide == Gates->ArenaSide)
-			//{
-				AddScore(Player.Key, Gates->ArenaSide);
-			//}
+			AddScore(Player.Key, Gates->ArenaSide);
 		}
 	}
 }
-
-/*void APongGameMode::CreateWaitWidget(APongPlayerController* PongPlayer)
-{
-	//UUserWidget* Widget = Cast<UUserWidget>(WaitWidget);
-	auto WidgetRef = CreateWidget<UUserWidget>(PongPlayer, WaitWidget);
-
-	if (WidgetRef)
-	{
-		WidgetRef->AddToViewport();
-	}
-
-	/*ConstructorHelpers::FClassFinder<UUserWidget> WaitWidgetRef(TEXT("/Game/Blueprints/UI/WBP_Wait"));
-	TSubclassOf<UUserWidget> WaitWidget;
-	if (WaitWidgetRef.Class)
-	{
-		WaitWidget = WaitWidgetRef.Class;
-	}*/
-	
-
-	/*UUserWidget* WaitWidget = Cast<UUserWidget>(StaticLoadObject(UObject::StaticClass(), NULL, TEXT("/Game/Blueprints/UI/WBP_Wait")));
-	UBlueprint* GeneratedBP = Cast<UBlueprint>(WaitWidget);*/
-
-	/*FStringClassReference WaitWidgetRef(TEXT("/Game/Blueprints/UI/WBP_Wait"));
-	UClass* WaitWidget = WaitWidgetRef.TryLoadClass<UUserWidget>();
-	UUserWidget* WaitWidgetInstance = Cast<UUserWidget>(WaitWidget);*/
-
-	//UObject* SpawnActor = Cast<UObject>(StaticLoadObject(UObject::StaticClass(), NULL, TEXT("/Game/Pong/Blueprints/Gameplay/Converted/BP_Ball_C")));
-	//UBlueprint* GeneratedBP = Cast<UBlueprint>(SpawnActor);
-	/*if (IsValid(WidgetClass))
-	{
-		FStringClassReference WaitWidgetRef(TEXT("/Game/Blueprints/UI/WBP_Wait"));
-		UClass* WaitWidget = WaitWidgetRef.TryLoadClass<UUserWidget>();
-		WaitWidget = Cast<UUserWidget>CreateWidget(GetWorld(), WidgetClass);
-	}
-
-	//static ConstructorHelpers::FClassFinder<UUserWidget> WaitWidget(TEXT("/Game/Blueprints/UI/WBP_Wait"));
-
-	
-
-	if (WaitWidget != nullptr)
-	{
-		UUserWidget* Wait = CreateWidget<UUserWidget>(this->GetGameInstance(), WaitWidget);
-		//UUserWidget* Wait = CreateWidget<UUserWidget>(PongPlayer, WaitWidget);
-		Wait->AddToViewport();
-	}*/
-	/*FStringClassReference WidgetWaitRef();
-	UClass* WaitWidget = WidgetWaitRef.TryLoadClass<UUserWidget>();
-	if (WaitWidget)
-	{
-		UUserWidget* WaitWidget = CreateWidget<UUserWidget>(this->GetGameInstance(), WaitWidget);
-		if (WaitWidget)
-		{
-			WaitWidget->AddToViewport();
-		}	
-	}*/

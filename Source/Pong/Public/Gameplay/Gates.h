@@ -17,7 +17,8 @@ class PONG_API AGates : public AActor
 public:
 	AGates();
 
-	virtual void Tick(float DeltaTime) override;
+	UPROPERTY(VisibleAnywhere)
+	UBoxComponent* GatesCollision;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TEnumAsByte<EArenaSides> ArenaSide;
@@ -26,10 +27,4 @@ public:
 	void OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor,
 		class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
-	UPROPERTY(VisibleAnywhere)
-	UBoxComponent* GatesCollision;
-
-protected:
-	virtual void BeginPlay() override;
-	
 };

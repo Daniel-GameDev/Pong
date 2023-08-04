@@ -7,9 +7,6 @@
 #include "Common/ArenaSides.h"
 #include "PongArenaCamera.generated.h"
 
-/**
- * 
- */
 UCLASS()
 class PONG_API APongArenaCamera : public ACameraActor
 {

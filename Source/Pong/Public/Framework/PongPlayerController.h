@@ -7,8 +7,6 @@
 #include "Common/ArenaSides.h"
 #include "PongPlayerController.generated.h"
 
-//class APongArenaCamera;
-
 UCLASS()
 class PONG_API APongPlayerController : public APlayerController
 {
@@ -22,7 +20,6 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void MovePlatform(float Value);
 
-	//TODO: Switch speed input for sides on begin play
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TEnumAsByte<EArenaSides> ArenaSide;
 
@@ -35,23 +32,12 @@ public:
 	UPROPERTY(EditAnywhere)
 	float MaxRange;
 
-	//UPROPERTY(EditAnywhere)
-	//APongArenaCamera* PongArenaCamera;
-
-	//UFUNCTION(BlueprintCallable)
-	//void SetupPlayerCamera(APongArenaCamera* PongArenaCamera);
-
 	UFUNCTION(Server, Unreliable)
-	void AddPlatformOffSet(float deltaY);
+	void AddPlatformOffSet(float DeltaY);
 
 protected:
-	virtual void BeginPlay() override;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widgets")
 	UUserWidget* ScoretWidget;
-
-	//UFUNCTION(BlueprintImplementableEvent, Client, Unreliable)
-	//void DoSomething2();
 
 private:
 	UPROPERTY()

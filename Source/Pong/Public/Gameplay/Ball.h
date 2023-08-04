@@ -16,10 +16,6 @@ public:
 
 	virtual void Tick(float DeltaTime) override;
 
-	UFUNCTION()
-	void OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, 
-		class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
-
 protected:
 	virtual void BeginPlay() override;
 	
@@ -30,17 +26,26 @@ protected:
 	FVector Direction;
 
 	UPROPERTY(EditAnywhere)
-	float BallVelocity;
+	float Velocity;
 
 	UFUNCTION(BlueprintCallable)
-	void BallOffset(float deltatime);
-
-	UFUNCTION(BlueprintCallable)
-	void ChangeDirectionBasedOnWallType(AActor* TouchedWall);
+	void Offset(float deltatime);
 
 	UFUNCTION(BlueprintCallable)
 	void ChangeSide();
 
 	UFUNCTION(BlueprintCallable)
 	void ChangeDirection();
+
+	UFUNCTION(BlueprintCallable)
+	void ChangeDirectionByWallType(AActor* TouchedWall);
+
+private:
+	void SetRandomDirection();
+
+public:
+	UFUNCTION()
+	void OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor,
+		class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+
 };
