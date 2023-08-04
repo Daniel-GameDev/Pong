@@ -18,31 +18,31 @@ AActor* APongGameMode::GetStartPoint(APongPlayerController* PongPlayer)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Player I Entered the Game as RightPlayer!"));
 
-		PongPlayers.Add(PongPlayer, SetupPlayerData(RightSide));
+		PongPlayers.Add(PongPlayer, SetupPlayerData(EAS_RightSide));
 
 		PongPlayer->PlatformVelocity = PongPlayer->PlatformVelocity * -1;
 
-		//PongPlayer->ArenaSide == RightSide; //TODO: Delete ArenaSide in PlayerController?
+		//PongPlayer->ArenaSide == EAS_RightSide; //TODO: Delete ArenaSide in PlayerController?
 
-		CreateWaitWidget(PongPlayer);
+		//CreateWaitWidget(PongPlayer);
 
-		return GetPlayerStart(RightSide);
+		return GetPlayerStart(EAS_RightSide);
 	}
 	else if (PongPlayers.Num() == 1)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Player II Entered the Game as LeftPlayer!"));
 
-		PongPlayers.Add(PongPlayer, SetupPlayerData(LeftSide));
+		PongPlayers.Add(PongPlayer, SetupPlayerData(EAS_LeftSide));
 
 		//PongPlayer->PlatformVelocity = PongPlayer->PlatformVelocity * -1;
 
-		return GetPlayerStart(LeftSide);
+		return GetPlayerStart(EAS_LeftSide);
 	}
 
 	return nullptr;
 }
 
-FPongPlayer APongGameMode::SetupPlayerData(ArenaSides arenaSide)
+FPongPlayer APongGameMode::SetupPlayerData(EArenaSides arenaSide)
 {
 	TArray<AActor*> GatesArray;;
 	TArray<AActor*> CameraArray;
@@ -59,7 +59,7 @@ FPongPlayer APongGameMode::SetupPlayerData(ArenaSides arenaSide)
 
 		if (Gate != nullptr)
 		{
-			if ((Gate->ArenaSide) == arenaSide)
+ 			if ((Gate->ArenaSide) == arenaSide)
 			{
 				PongPlayerTempStruct.PlayerGates = Gate;
 			}
@@ -81,7 +81,8 @@ FPongPlayer APongGameMode::SetupPlayerData(ArenaSides arenaSide)
 
 	return PongPlayerTempStruct;
 }
-APongPlayerStart* APongGameMode::GetPlayerStart(ArenaSides arenaSide)
+
+APongPlayerStart* APongGameMode::GetPlayerStart(EArenaSides arenaSide)
 {
 	APongPlayerStart* TempPlayerStart = nullptr;
 	TArray<AActor*> GameStarArray;
@@ -102,6 +103,7 @@ APongPlayerStart* APongGameMode::GetPlayerStart(ArenaSides arenaSide)
 
 	return TempPlayerStart;
 }
+
 void APongGameMode::PostLogin(APlayerController* NewPlayer)
 {
 	Super::PostLogin(NewPlayer);
@@ -111,20 +113,21 @@ void APongGameMode::PostLogin(APlayerController* NewPlayer)
 	if (PongPlayers.Contains(NewPongPlayer))
 	{
 		NewPongPlayer->SetViewTargetWithBlend(PongPlayers.Find(NewPongPlayer)->PlayerArenaCamera);
+
 		PongPlayers.Find(NewPongPlayer)->PlayerGates->GatesCollision->OnComponentEndOverlap.AddDynamic(this, &APongGameMode::OnComponentEndOverlap);
 	}
 
-	if (GetWorld()->GetAuthGameMode()->GetNumPlayers() < 2)
+	/*if (GetWorld()->GetAuthGameMode()->GetNumPlayers() < 2)
 	{
 		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("Waiting for Second Player.."));
-	}
-	else if (GetWorld()->GetAuthGameMode()->GetNumPlayers() == 2)
-	{
-		SpawnBall();
-	}
+	}*/
 }
+
 void APongGameMode::SpawnBall()
 {
+	//FTimerHandle UnusedHandle;
+	//GetWorldTimerManager().SetTimer(UnusedHandle, this, &APongGameMode::SpawnBall, 1.f, false);
+
 	FVector Location(0.f, 0.f, 200.f);
 	FRotator Rotation(0.f, 0.f, 0.f);
 
@@ -141,6 +144,7 @@ void APongGameMode::SpawnBall()
 	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 	GetWorld()->SpawnActor<ABall>(GeneratedBP->GeneratedClass, Location, Rotation, SpawnParams);
 }
+
 void APongGameMode::OnComponentEndOverlap(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor,
 	class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
@@ -148,34 +152,25 @@ void APongGameMode::OnComponentEndOverlap(class UPrimitiveComponent* OverlappedC
 
 	if (Gates != nullptr)
 	{
-		switch (Gates->ArenaSide)
+		for (auto& Player : PongPlayers)
 		{
-		case RightSide:
-			GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Red, FString::Printf(TEXT("RIGHT")));
-			break;
-		case LeftSide:
-			GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Red, FString::Printf(TEXT("LEFT")));
-			break;
-		default:
-			break;
+			//if (Player.Value.ArenaSide == Gates->ArenaSide)
+			//{
+				AddScore(Player.Key, Gates->ArenaSide);
+			//}
 		}
-
-		FTimerHandle UnusedHandle;
-		GetWorldTimerManager().SetTimer(UnusedHandle, this, &APongGameMode::SpawnBall, 2.f, false);
 	}
 }
 
-void APongGameMode::CreateWaitWidget(APongPlayerController* PongPlayer)
+/*void APongGameMode::CreateWaitWidget(APongPlayerController* PongPlayer)
 {
-	/*if (WaitWidget)
-	{
-		WaitWidgetInstance = CreateWidget<UUserWidget>(this, WaitWidget);
+	//UUserWidget* Widget = Cast<UUserWidget>(WaitWidget);
+	auto WidgetRef = CreateWidget<UUserWidget>(PongPlayer, WaitWidget);
 
-		if (WaitWidgetInstance)
-		{
-			WaitWidgetInstance->AddToViewport();
-		}
-	}*/
+	if (WidgetRef)
+	{
+		WidgetRef->AddToViewport();
+	}
 
 	/*ConstructorHelpers::FClassFinder<UUserWidget> WaitWidgetRef(TEXT("/Game/Blueprints/UI/WBP_Wait"));
 	TSubclassOf<UUserWidget> WaitWidget;
@@ -221,4 +216,3 @@ void APongGameMode::CreateWaitWidget(APongPlayerController* PongPlayer)
 			WaitWidget->AddToViewport();
 		}	
 	}*/
-}

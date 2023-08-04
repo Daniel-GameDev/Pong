@@ -57,10 +57,10 @@ void ABall::ChangeDirectionBasedOnWallType(AActor* TouchedWall)
 
 			switch (WallType)
 			{
-			case Side:
+			case EWT_Side:
 				ChangeSide();
 				break;
-			case Front:
+			case EWT_Front:
 				ChangeDirection();
 				break;
 			default:

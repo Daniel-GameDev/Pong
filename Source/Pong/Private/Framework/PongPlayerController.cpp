@@ -50,7 +50,7 @@ void APongPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
 
-	if (ArenaSide == RightSide)//TODO: Need to be assigned by gamemode
+	if (ArenaSide == EAS_RightSide)//TODO: Need to be assigned by gamemode
 	{
 		//PlatformVelocity = ;
 	}

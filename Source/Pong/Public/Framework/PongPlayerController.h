@@ -24,7 +24,7 @@ public:
 
 	//TODO: Switch speed input for sides on begin play
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	TEnumAsByte<ArenaSides> ArenaSide;
+	TEnumAsByte<EArenaSides> ArenaSide;
 
 	UPROPERTY(EditAnywhere)
 	float PlatformVelocity;
@@ -47,7 +47,10 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
-	//UFUNCTION(BlueprintImplementableEvent)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widgets")
+	UUserWidget* ScoretWidget;
+
+	//UFUNCTION(BlueprintImplementableEvent, Client, Unreliable)
 	//void DoSomething2();
 
 private:

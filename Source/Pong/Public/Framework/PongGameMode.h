@@ -11,6 +11,7 @@ class AGates;
 class APongArenaCamera;
 class APongPlayerController;
 class APongPlayerStart;
+class UUserWidget;
 
 USTRUCT(BlueprintType)
 struct FPongPlayer
@@ -18,7 +19,7 @@ struct FPongPlayer
 	GENERATED_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TEnumAsByte<ArenaSides> ArenaSide;
+	TEnumAsByte<EArenaSides> ArenaSide;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	AGates* PlayerGates;
@@ -36,32 +37,26 @@ protected:
 	UFUNCTION(BlueprintCallable)
 	AActor* GetStartPoint(APongPlayerController* PongPlayer);
 
-	UPROPERTY()
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	TMap<APongPlayerController*, FPongPlayer> PongPlayers;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TSubclassOf<UUserWidget> WaitWidget;
-
-	UPROPERTY()
-	UUserWidget* WaitWidgetInstance;
-
-	/*UPROPERTY(VisibleInstanceOnly)
-	class UWaitWidget* WaitWidget;*/
-
-	/*UPROPERTY()
-	UUserWidget* WaitWidgetRef;*/
+	/*UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widgets")
+	TSubclassOf<UUserWidget> WaitWidget;*/
 
 	UFUNCTION()
-	FPongPlayer SetupPlayerData(ArenaSides arenaSide);
+	FPongPlayer SetupPlayerData(EArenaSides arenaSide);
 
 	UFUNCTION()
-	APongPlayerStart* GetPlayerStart(ArenaSides arenaSide);
+	APongPlayerStart* GetPlayerStart(EArenaSides arenaSide);
 
 	UFUNCTION()
 	virtual void PostLogin(APlayerController* NewPlayer) override;
 
-	UFUNCTION()
+	UFUNCTION(BlueprintCallable)
 	void SpawnBall();
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void AddScore(APlayerController* PongPlayer, EArenaSides arenaSide);
 
 	/*UFUNCTION()
 	void OverlapEnd(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, 
@@ -71,6 +66,6 @@ protected:
 	void OnComponentEndOverlap(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, 
 		class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 
-	UFUNCTION()
-	void CreateWaitWidget(APongPlayerController* PongPlayer);
+	//UFUNCTION()
+	//void CreateWaitWidget(APongPlayerController* PongPlayer);
 };

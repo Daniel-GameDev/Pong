@@ -30,10 +30,10 @@ void AWall::ChangeSize()
 {
 	switch (WallType)
 	{
-	case Side:
+	case EWT_Side:
 		WallMesh->SetRelativeScale3D(SideWallSize);
 		break;
-	case Front:
+	case EWT_Front:
 		WallMesh->SetRelativeScale3D(FrontWallSize);
 		break;
 	default:

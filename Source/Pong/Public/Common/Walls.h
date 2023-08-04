@@ -8,6 +8,6 @@
 UENUM(BlueprintType)
 enum EWallType
 {
-	Side UMETA(DisplayName = "Side"),
-	Front UMETA(DisplayName = "Front")
+	EWT_Side UMETA(DisplayName = "Side"),
+	EWT_Front UMETA(DisplayName = "Front")
 };

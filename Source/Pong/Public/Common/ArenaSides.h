@@ -6,8 +6,8 @@
 #include "ArenaSides.generated.h"
 
 UENUM(BlueprintType)
-enum ArenaSides
+enum EArenaSides
 {
-	RightSide UMETA(DisplayName = "RightSide"),
-	LeftSide UMETA(DisplayName = "LeftSide")
+	EAS_RightSide UMETA(DisplayName = "EAS_RightSide"),
+	EAS_LeftSide UMETA(DisplayName = "EAS_LeftSide")
 };

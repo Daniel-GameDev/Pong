@@ -17,5 +17,5 @@ class PONG_API APongArenaCamera : public ACameraActor
 	
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	TEnumAsByte<ArenaSides> ArenaSide;
+	TEnumAsByte<EArenaSides> ArenaSide;
 };

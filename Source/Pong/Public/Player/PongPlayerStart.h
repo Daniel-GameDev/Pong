@@ -14,6 +14,6 @@ class PONG_API APongPlayerStart : public APlayerStart
 
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TEnumAsByte<ArenaSides> ArenaSide;
+	TEnumAsByte<EArenaSides> ArenaSide;
 	
 };

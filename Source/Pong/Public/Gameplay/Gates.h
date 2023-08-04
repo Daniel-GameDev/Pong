@@ -20,7 +20,7 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	TEnumAsByte<ArenaSides> ArenaSide;
+	TEnumAsByte<EArenaSides> ArenaSide;
 
 	UFUNCTION()
 	void OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor,
