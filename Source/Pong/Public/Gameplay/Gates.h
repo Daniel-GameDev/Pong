@@ -26,10 +26,10 @@ public:
 	void OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor,
 		class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
-protected:
-	virtual void BeginPlay() override;
-
-private:
 	UPROPERTY(VisibleAnywhere)
 	UBoxComponent* GatesCollision;
+
+protected:
+	virtual void BeginPlay() override;
+	
 };

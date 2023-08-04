@@ -39,6 +39,18 @@ protected:
 	UPROPERTY()
 	TMap<APongPlayerController*, FPongPlayer> PongPlayers;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TSubclassOf<UUserWidget> WaitWidget;
+
+	UPROPERTY()
+	UUserWidget* WaitWidgetInstance;
+
+	/*UPROPERTY(VisibleInstanceOnly)
+	class UWaitWidget* WaitWidget;*/
+
+	/*UPROPERTY()
+	UUserWidget* WaitWidgetRef;*/
+
 	UFUNCTION()
 	FPongPlayer SetupPlayerData(ArenaSides arenaSide);
 
@@ -47,4 +59,18 @@ protected:
 
 	UFUNCTION()
 	virtual void PostLogin(APlayerController* NewPlayer) override;
+
+	UFUNCTION()
+	void SpawnBall();
+
+	/*UFUNCTION()
+	void OverlapEnd(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, 
+		UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);*/
+
+	UFUNCTION()
+	void OnComponentEndOverlap(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, 
+		class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
+
+	UFUNCTION()
+	void CreateWaitWidget(APongPlayerController* PongPlayer);
 };
